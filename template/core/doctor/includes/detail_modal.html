@@ -1,0 +1,44 @@
+{% load static %}
+<div class="modal fade" id="doctorModal" tabindex="-1" aria-labelledby="doctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="doctorModalLabel">
+                    <i class="fas fa-user-circle me-2"></i>Detalles del Doctor
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Columna para la foto -->
+                    <div class="col-md-4 text-center mb-3">
+                        <img id="doctor-foto" src="{% static 'img/empty.png' %}" alt="Foto del doctor"
+                            class="img-fluid rounded shadow-sm" style="max-height: 200px; width: auto;">
+                    </div>
+                    <!-- Columna para los datos -->
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-id-card me-2"></i>ID:</strong> <span id="doctor-id">-</span></p>
+                                <p><strong><i class="fas fa-user me-2"></i>Nombres:</strong> <span id="doctor-nombres">-</span></p>
+                                <p><strong><i class="fas fa-user me-2"></i>Apellidos:</strong> <span id="doctor-apellidos">-</span></p>
+                                <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> <span id="doctor-email">-</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-address-card me-2"></i>Código:</strong> <span id="doctor-codigo">-</span></p>
+                                <p><strong><i class="fas fa-phone me-2"></i>Teléfono:</strong> <span id="doctor-telefono">-</span></p>
+                                <p><strong><i class="fas fa-map-marker-alt me-2"></i>Dirección:</strong> <span id="doctor-direccion">-</span></p>
+                                <p><strong><i class="fas fa-clock me-2"></i>Especialidad:</strong> <span id="doctor-especialidad">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,141 @@
+{% extends "components/base.html" %}
+{% block content %} 
+  <div class="container-fluid">
+    <div class="row">
+       <!-- Main Content -->
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+            <!-- Marca Medicamento List Content -->
+            <div class="card mb-4">
+                <div class="card-body">
+                   <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0 text-primary-emphasis fw-bold">Listado de Marcas de Medicamentos</h3>
+                   </div>
+
+                   <!-- Search and Filter -->
+                   <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                    <form method="GET" action="{% url 'core:marca_medicamento_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+                        <div class="col-md-6">
+                            <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar marca...">
+                        </div>
+                    </form>
+                    <a class="btn btn-primary fw-bold mt-3 mt-md-0" href="{% url 'core:marca_medicamento_create' %}">
+                        <i class="fas fa-plus me-2"></i>Nueva Marca
+                    </a>
+                   </div>
+
+                   <!-- Marca Table -->
+                   <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for marca in marcas %} 
+                                <tr>
+                                    <td>{{ marca.nombre }}</td>
+                                    <td>{{ marca.descripcion }}</td>
+                                    <td>
+                                        {% if marca.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
+                                           <button class="btn btn-primary btn-sm" title="Detalle Marca"
+                                                onclick="verMarcaMedicamento('{{ marca.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{% url 'core:marca_medicamento_update' marca.id %}" class="btn btn-success btn-sm text-white" title="Editar Marca">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% with id=marca.id name=marca.nombre msg="¿Está seguro de eliminar esta marca?" %}
+                                             <button class="btn btn-danger btn-sm" title="Eliminar Marca" onclick="confirmDelete('{{ id }}', '{{ name }}', '{{ msg|escapejs }}');">
+                                                <i class="fas fa-trash"></i>
+                                             </button>
+                                            {% endwith %}
+                                        </div>
+                                    </td>
+                                </tr>
+                               {% endfor %} 
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} marcas</p>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %} 
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1"><i class="fas fa-chevron-left"></i></a>
+                                </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <!-- End Pagination -->
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <!-- Include delete confirmation modal -->
+    {% include 'includes/confirm_delete_modal.html' %}
+  <!-- Include detail modal -->
+    {% include 'core/marca_medicamento/includes/detail_modal.html' %}
+{% endblock %}
+{% block js %}
+  <script>
+    function confirmDelete(id, name, msg) {
+        document.getElementById('modalMessage').innerText = `${msg} ${name}`;
+        const form = document.getElementById('deleteForm');
+        form.action = `/marca_medicamento/delete/${id}/`;
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+
+    function closeModal() {
+        const modalElement = document.getElementById('confirmDeleteModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    function verMarcaMedicamento(id) {
+      fetch(`/marca_medicamento/detail/${id}/`)
+        .then(response => response.json())
+        .then(data => {
+            // Llenar los datos del modal
+            document.getElementById('marca-id').textContent = data.id;
+            document.getElementById('marca-nombre').textContent = data.nombre;
+            document.getElementById('marca-descripcion').textContent = data.descripcion;
+            document.getElementById('marca-estado').textContent = data.activo ? 'Activo' : 'Inactivo';
+
+             // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('marcaMedicamentoModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos de la marca de medicamento');
+        });
+    }
+  </script>
+{% endblock %}

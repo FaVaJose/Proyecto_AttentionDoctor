@@ -1,0 +1,34 @@
+<div class="modal fade" id="diagnosticoModal" tabindex="-1" aria-labelledby="diagnosticoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="diagnosticoModalLabel">
+                    <i class="fas fa-notes-medical me-2"></i>Detalles del Diagnóstico
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Columna para los datos -->
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-code me-2"></i>Código:</strong> <span id="diagnostico-codigo"></span></p>
+                                <p><strong><i class="fas fa-clipboard-list me-2"></i>Descripción:</strong> <span id="diagnostico-descripcion"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-info-circle me-2"></i>Datos Adicionales:</strong> <span id="diagnostico-datos"></span></p>
+                                <p><strong><i class="fas fa-toggle-on me-2"></i>Activo:</strong> <span id="diagnostico-activo"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

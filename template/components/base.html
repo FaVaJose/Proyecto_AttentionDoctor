@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" >
+    <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/home.css' %}" rel="stylesheet">
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+   <div class="container-fluid">
+     <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 px-0 sidebar">
+               
+            <div class="text-center py-1">
+                <div class="d-flex flex-row justify-content-center align-items-center text-center">
+                    <img src="{% static 'img/usuario_anonimo.png' %}" alt="Logo" class="mb-3 rounded-circle" width="100px">
+                  
+                </div>
+                <h5 class="text-white">{{request.user}}</h5>
+            </div>
+            <nav class="nav flex-column mt-4">
+                <a class="nav-link active" href="#"><i class="fas fa-home me-2"></i> Dashboard</a>
+                <a class="nav-link" href="{% url 'attention:cita_list' %}"><i class="fas fa-calendar-alt me-2"></i> Citas</a>
+                <a class="nav-link" href="{% url 'core:patient_list' %}"><i class="fas fa-user-injured me-2"></i> Pacientes</a>
+                
+                <a class="nav-link" href="{% url 'attention:attention_list' %}"><i class="fas fa-procedures me-2"></i> Atencion</a>
+                <a class="nav-link" href="{% url 'attention:attention_list' %}"><i class="fas fa-procedures me-2"></i>Ficha Clinica</a>
+                <a class="nav-link" href="#"><i class="fas fa-stethoscope me-2"></i>Pagos</a>
+                <a class="nav-link" href="#"><i class="fas fa-stethoscope me-2"></i>Examenes</a>
+                <a class="text-white ms-2 text-decoration-none " href="#"><i></i> Mantenimiento</a>
+                <a class="nav-link" href="{% url 'core:especialidad_list' %}"><i class="fas fa-cogs me-2"></i> Especialidad</a>
+                <a class="nav-link" href="{% url 'core:doctor_list' %}"><i class="fas fa-cogs me-2"></i> Doctor</a>
+                <a class="nav-link" href="{% url 'attention:horario_list' %}"><i class="fas fa-cogs me-2"></i> Horarios</a>
+                <a class="nav-link" href="#"><i class="fas fa-cogs me-2"></i> Servicios</a>
+                <a class="nav-link" href="#"><i class="fas fa-cogs me-2"></i> Costos</a>
+                <a class="nav-link" href="{% url 'core:cargo_list' %}"><i class="fas fa-cogs me-2"></i> Cargo</a>
+                <a class="nav-link" href="#"><i class="fas fa-cogs me-2"></i> Certificados</a>
+                <a class="nav-link" href="{% url 'core:empleado_list' %}"><i class="fas fa-cogs me-2"></i> Empleado</a>
+                <a class="nav-link" href="{% url 'core:tipo_medicamento_list' %}"><i class="fas fa-cogs me-2"></i>Tipo Medicina</a>
+                <a class="nav-link" href="{% url 'core:marca_medicamento_list' %}"><i class="fas fa-cogs me-2"></i>Marca Medicina </a>
+                <a class="nav-link" href="{% url 'core:medicamento_list' %}"><i class="fas fa-cogs me-2"></i> Medicamento</a>
+                <a class="nav-link" href="{% url 'core:diagnostico_list' %}"><i class="fas fa-cogs me-2"></i> Diagnostico</a>
+                <a class="nav-link" href="{% url 'core:tipo_sangre_list' %}"><i class="fas fa-cogs me-2"></i> Tipo Sangre</a>
+               
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 px-md-4 main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light sticky-top mb-4">
+                <div class="container-fluid">
+                <a class="text-white text-decoration-none fw-bold d-inline-flex align-items-center gap-2 transition-all hover:text-primary-dark" href="{% url 'core:home' %}">
+                        <i class="fas fa-home"></i> <!-- o cualquier otro icono de Font Awesome -->
+                        {{title}}
+                    </a>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-md me-2"></i>Dr Daniel Vera
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+           <main>
+             <!-- llama al message de exito o fracaso -->
+             {% include 'includes/messages.html' %}
+            {% block content %}
+           
+            <!-- Dashboard Content -->
+             <div class="row g-4 mb-4">
+                <!-- Stats Cards -->
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-square bg-white text-primary">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="card-title mb-0">Citas Hoy</h6>
+                                <h3 class="mb-0">{{can_cit}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card" style="background: linear-gradient(45deg, #2ecc71, #27ae60);">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-square bg-white text-success">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <div>
+                            
+                                <h6 class="card-title mb-0">Pacientes</h6> 
+                                <h3 class="mb-0">{{can_paci}}</h3>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-square bg-white text-danger">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div>
+                                <h6 class="card-title mb-0">Atenciones</h6>
+                                <h3 class="mb-0">80</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card" style="background: linear-gradient(45deg, #9b59b6, #8e44ad);">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-square bg-white text-purple">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <div>
+                                <h6 class="card-title mb-0">Pagos hoy</h6>
+                                <h3 class="mb-0">$10000</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+            <!-- Quick Actions -->
+             <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Acciones Rápidas</h5>
+                            <div class="quick-actions d-flex flex-wrap gap-3">
+                                <a class="btn btn-primary text-white d-inline-flex align-items-center" href="{% url 'attention:cita_list' %}">
+                                  <i class="fas fa-user-plus me-2"></i>
+                                    Citas
+                                </a>
+                                <a class="btn btn-success text-white d-inline-flex align-items-center" href="{% url 'core:patient_list' %}">
+                                  <i class="fas fa-user-plus me-2"></i>
+                                  Paciente 
+                                </a>
+                                <a class="btn btn-dark text-white" href="{% url 'attention:attention_list' %}" ><i class="fas fa-file-medical me-2"></i>Atencion</a>
+                               
+                                <a class="btn btn-info fw-bold text-white" href="#" ><i class="fas fa-file-medical me-2"></i>Certificado</a>
+                               
+                                <a class="btn btn-danger"><i class="fas fa-notes-medical me-2"></i>Ficha Clinica</a>
+                                 <a class="btn btn-secondary text-white" href="#" ><i class="fas fa-file-medical me-2"></i>Pagos</a>
+                                 <a class="btn btn-warning text-white" href="#" ><i class="fas fa-file-medical me-2"></i>Examenes</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+            <!-- Recent Activity & Upcoming Appointments -->
+             <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Actividad Reciente</h5>
+                            <div class="activity-item d-flex align-items-center py-3 border-bottom">
+                                <div class="bg-primary text-white p-2 rounded me-3">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">Nuevo paciente registrado</p>
+                                    <small class="text-muted">Hace 5 minutos</small>
+                                </div>
+                            </div>
+                            <div class="activity-item d-flex align-items-center py-3 border-bottom">
+                                <div class="bg-success text-white p-2 rounded me-3">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">Cita completada</p>
+                                    <small class="text-muted">Hace 15 minutos</small>
+                                </div>
+                            </div>
+                            <div class="activity-item d-flex align-items-center py-3">
+                                <div class="bg-info text-white p-2 rounded me-3">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">Nueva consulta registrada</p>
+                                    <small class="text-muted">Hace 30 minutos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Próximas Citas</h5>
+                            {% if proximas_citas %}
+                                {% for cita in proximas_citas %}
+                                    <div class="appointment-item d-flex align-items-center py-3 border-bottom">
+                                        <img src="{{ cita.paciente.get_image }}" alt="Patient" class="rounded-circle me-3" width="48" height="48">
+                                        <div>
+                                            <p class="mb-0 fw-bold">{{ cita.paciente.nombre_completo }}</p>
+                                            <small class="text-muted">
+                                                {{ cita.fecha|date:"j M Y" }} - {{ cita.hora_cita|time:"h:i A" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted">No hay citas programadas.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %} 
+         </main>  
+        </div>
+     </div>
+   </div>
+   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+   {% block js %}{% endblock %}
+  </body>
+</html>

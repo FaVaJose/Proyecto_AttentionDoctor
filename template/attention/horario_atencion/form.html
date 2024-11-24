@@ -1,0 +1,131 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block css %}
+<style>
+    .form-floating > label {
+        padding: 0.5rem 0.75rem;
+    }
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        height: 3.5rem;
+        line-height: 1.25;
+    }
+    .form-floating > textarea.form-control {
+        height: auto;
+        min-height: 100px;
+    }
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    .section-title {
+        color: #2563eb;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    .btn-primary {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        padding: 0.625rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+        border-color: #1d4ed8;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<title>{% block title %}Registrar Horario de Atención{% endblock title %}</title>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xxl-10">
+            <h3 class="text-center mb-2 fw-bold text-primary-emphasis shadow">
+                {{ title1 }}
+            </h3>
+            
+            <div class="card shadow">
+                <div class="card-body p-2 p-md-3">
+                    <form id="frmHorario" method="POST">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        
+                        <!-- Información del Horario -->
+                        <h5 class="text-primary-emphasis fw-bold">Información del Horario</h5>
+                         <hr class="border border-2 border-success">
+                        <div class="row g-4 mb-2">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.dia_semana }}
+                                    <label for="{{ form.dia_semana.id_for_label }}">{{ form.dia_semana.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.hora_inicio }}
+                                    <label for="{{ form.hora_inicio.id_for_label }}">{{ form.hora_inicio.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.hora_fin }}
+                                    <label for="{{ form.hora_fin.id_for_label }}">{{ form.hora_fin.label }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Intervalo de Descanso -->
+                        <h5 class="text-primary-emphasis fw-bold">Intervalo de Descanso</h5>
+                         <hr class="border border-2 border-success">
+                        <div class="row g-4 mb-2">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.Intervalo_desde }}
+                                    <label for="{{ form.Intervalo_desde.id_for_label }}">{{ form.Intervalo_desde.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.Intervalo_hasta }}
+                                    <label for="{{ form.Intervalo_hasta.id_for_label }}">{{ form.Intervalo_hasta.label }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado -->
+                        <h5 class="text-primary-emphasis fw-bold">Estado</h5>
+                        <hr class="border border-2 border-success">
+                        <div class="row g-4 mb-2">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.activo }}
+                                    <label class="form-check-label" for="{{ form.activo.id_for_label }}">
+                                        {{ form.activo.label }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4 gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar Horario
+                            </button>
+                            <a class="btn btn-success" href="{% url 'attention:horario_list' %}">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

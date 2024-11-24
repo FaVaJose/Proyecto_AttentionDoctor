@@ -1,0 +1,36 @@
+<div class="modal fade" id="empleadoModal" tabindex="-1" aria-labelledby="empleadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="empleadoModalLabel">
+                    <i class="fas fa-user-circle me-2"></i>Detalles del Empleado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Foto -->
+                    <div class="col-md-4 text-center mb-3">
+                        <img id="empleado-foto" src="" alt="Foto del empleado" 
+                             class="img-fluid rounded shadow-sm" 
+                             style="max-height: 200px; width: auto;">
+                    </div>
+                    <!-- Detalles -->
+                    <div class="col-md-8">
+                        <p><strong>ID:</strong> <span id="empleado-id"></span></p>
+                        <p><strong>Nombre:</strong> <span id="empleado-nombre"></span></p>
+                        <p><strong>Cargo:</strong> <span id="empleado-cargo"></span></p>
+                        <p><strong>Sueldo:</strong> <span id="empleado-sueldo"></span></p>
+                        <p><strong>Dirección:</strong> <span id="empleado-direccion"></span></p>
+                        <p><strong>Estado:</strong> <span id="empleado-estado"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+            <!-- Mensajes de error del formulario -->
+            {% include 'includes/message_error_form.html' %}
+            <!-- Formulario de medicamento -->
+            <form method="post" enctype="multipart/form-data" class="py-4">
+                {% csrf_token %}
+                <div class="card shadow p-4">
+                    <h3 class="text-primary-emphasis mb-4 fw-bold">{{ title1 }}</h3>
+                    <div class="row g-0">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.tipo.id_for_label }}" class="form-label fw-bold">{{ form.tipo.label }}</label>
+                                {{ form.tipo }}
+                                {{ form.tipo.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.marca_medicamento.id_for_label }}" class="form-label fw-bold">{{ form.marca_medicamento.label }}</label>
+                                {{ form.marca_medicamento }}
+                                {{ form.marca_medicamento.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold">{{ form.nombre.label }}</label>
+                                {{ form.nombre }}
+                                {{ form.nombre.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">{{ form.descripcion.label }}</label>
+                                {{ form.descripcion }}
+                                {{ form.descripcion.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.concentracion.id_for_label }}" class="form-label fw-bold">{{ form.concentracion.label }}</label>
+                                {{ form.concentracion }}
+                                {{ form.concentracion.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.cantidad.id_for_label }}" class="form-label fw-bold">{{ form.cantidad.label }}</label>
+                                {{ form.cantidad }}
+                                {{ form.cantidad.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.precio.id_for_label }}" class="form-label fw-bold">{{ form.precio.label }}</label>
+                                {{ form.precio }}
+                                {{ form.precio.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.comercial.id_for_label }}" class="form-label fw-bold">{{ form.comercial.label }}</label>
+                                {{ form.comercial }}
+                                {{ form.comercial.errors }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.activo.id_for_label }}" class="form-label fw-bold">{{ form.activo.label }}</label>
+                                {{ form.activo }}
+                                {{ form.activo.errors }}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button class="btn btn-outline-success me-2" type="submit">Guardar Medicamento</button>
+                            <a class="btn btn-outline-warning" href="{% url 'core:medicamento_list' %}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

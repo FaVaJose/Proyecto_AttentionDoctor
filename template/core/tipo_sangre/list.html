@@ -1,0 +1,142 @@
+{% extends "components/base.html" %}
+{% block content %} 
+  <div class="container-fluid">
+    <div class="row">
+       <!-- Main Content -->
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+           
+            <!-- Tipo de Sangre List Content -->
+            <div class="card mb-4">
+                <div class="card-body">
+                   <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0 text-primary-emphasis fw-bold">Consulta Tipo de Sangre</h3>
+                   </div>
+
+                   <!-- Search -->
+                   <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                    <form method="GET" action="{% url 'core:tipo_sangre_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+                        <div class="col-md-6">
+                            <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar tipo de sangre...">
+                        </div>
+                      </form>
+                      <a class="btn btn-primary fw-bold mt-3 mt-md-0" href="{% url 'core:tipo_sangre_create' %}">
+                                <i class="fas fa-plus me-2"></i>Nuevo Tipo de Sangre
+                      </a>
+                    </div>
+
+                    <!-- Tipo de Sangre Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th></th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for item in tipos_sangre %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ item.tipo }}</td>
+                                    <td>{{ item.descripcion }}</td>
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
+                                           <button class="btn btn-primary btn-sm" title="Detalle Tipo de Sangre"
+                                                onclick="verTipoSangre('{{ item.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{% url 'core:tipo_sangre_update' item.id %}" class="btn btn-success btn-sm text-white" title="Editar Tipo de Sangre">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% with id=item.id tipo=item.tipo msg="¿Está seguro de eliminar el tipo de sangre:" %}
+                                             <button class="btn btn-danger btn-sm" title="Eliminar Tipo de Sangre" onclick="confirmDelete('{{ id }}', '{{ tipo }}', '{{ msg|escapejs }}');">
+                                                <i class="fas fa-trash"></i>
+                                             </button>
+                                            {% endwith %}
+                                        </div>
+                                    </td>
+                                </tr>
+                             {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay tipos de sangre registrados.</td>
+                                </tr>
+                             {% endfor %} 
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} tipos de sangre</p>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %} 
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1"><i class="fas fa-chevron-left"></i></a>
+                                </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                              <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{num}}</a>
+                              </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                              <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                              </li>
+                             {% endif %}
+                        </ul>
+                    </nav>
+                    <!-- Fin de Pagination -->
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <!-- Modal para confirmación de eliminación -->
+    {% include 'includes/confirm_delete_modal.html' %}
+  <!-- Modal para detalle de tipo de sangre -->
+    {% include 'core/tipo_sangre/includes/detail_modal.html' %}
+{% endblock %}
+
+{% block js %}
+<script>
+    /* Función para confirmar eliminación */
+    function confirmDelete(id, tipo, msg) {
+        // Actualiza el mensaje del modal
+        document.getElementById('modalMessage').innerText = `${msg} ${tipo}`;
+        const form = document.getElementById('deleteForm');
+        form.action = `/tipos-sangre/${id}/eliminar/`; // Ajusta esta URL según tu configuración
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+
+    /* Función para cerrar el modal */
+    function closeModal() {
+        const modalElement = document.getElementById('confirmDeleteModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) modalInstance.hide();
+    }
+
+    /* Función para ver detalles del tipo de sangre */
+    function verTipoSangre(id) {
+        fetch(`/tipos-sangre/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Llenar el modal con los datos obtenidos
+                document.getElementById('tipoSangre-id').textContent = data.id;
+                document.getElementById('tipoSangre-tipo').textContent = data.tipo;
+                document.getElementById('tipoSangre-descripcion').textContent = data.descripcion || "N/A";
+
+                // Mostrar el modal
+                const modal = new bootstrap.Modal(document.getElementById('tipoSangreModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del tipo de sangre.');
+            });
+    }
+</script>
+{% endblock %}

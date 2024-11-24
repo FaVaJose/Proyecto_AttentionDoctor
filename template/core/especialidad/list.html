@@ -1,0 +1,158 @@
+{% extends "components/base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+            <!-- Contenido de la lista de especialidades -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0 text-primary-emphasis fw-bold">{{ title1 }}</h3>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                        <form method="GET" action="{% url 'core:especialidad_list' %}" class="d-flex gap-3 align-items-center">
+                            <div class="col-md-6">
+                                <input type="text" name="q" class="form-control search-box" 
+                                       value="{{ request.GET.q }}" 
+                                       placeholder="Buscar especialidad...">
+                            </div>
+                        </form>
+                        <a class="btn btn-primary fw-bold mt-3 mt-md-0" href="{% url 'core:especialidad_create' %}">
+                            <i class="fas fa-plus me-2"></i>Nueva Especialidad
+                        </a>
+                    </div>
+
+                    <!-- Especialidad Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th></th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Activo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in especialidades %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ item.nombre }}</td>
+                                        <td>{{ item.descripcion|default:"N/A" }}</td>
+                                        <td>
+                                            {% if item.activo %}
+                                                <span class="badge bg-success">Activo</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactivo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons d-flex gap-2">
+                                                <button class="btn btn-primary btn-sm" 
+                                                        title="Detalle Especialidad" 
+                                                        onclick="verEspecialidad('{{ item.id }}')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <a href="{% url 'core:especialidad_update' item.id %}" 
+                                                   class="btn btn-success btn-sm text-white" 
+                                                   title="Editar Especialidad">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                {% with id=item.id name=item.nombre msg="¿Está seguro de eliminar la especialidad:" %}
+                                                <button class="btn btn-danger btn-sm" 
+                                                        title="Eliminar Especialidad" 
+                                                        onclick="confirmDelete('{{ id }}', '{{ name }}', '{{ msg|escapejs }}');">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                {% endwith %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No hay especialidades registradas.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-muted mb-0">
+                            {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} especialidades
+                        </p>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+{% include 'includes/confirm_delete_modal.html' %}
+<!-- Modal de detalles de especialidad -->
+{% include 'core/especialidad/includes/detail_modal.html' %}
+
+{% endblock %}
+
+{% block js %}
+<script>
+    /* Función para confirmar eliminación */
+    function confirmDelete(id, name, msg) {
+        document.getElementById('modalMessage').innerText = `${msg} ${name}`;
+        const form = document.getElementById('deleteForm');
+        form.action = `/especialidades/${id}/eliminar/`; // Ajusta esta URL si es necesario
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+    function closeModal() {
+        const modalElement = document.getElementById('confirmDeleteModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) modalInstance.hide();
+    }
+
+    /* Función para ver detalles */
+    function verEspecialidad(id) {
+        fetch(`/especialidades/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('especialidad-id').textContent = data.id;
+                document.getElementById('especialidad-nombre').textContent = data.nombre;
+                document.getElementById('especialidad-descripcion').textContent = data.descripcion || "N/A";
+                document.getElementById('especialidad-activo').textContent = data.activo;
+
+                const modal = new bootstrap.Modal(document.getElementById('especialidadModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al cargar los datos de la especialidad.");
+            });
+    }
+</script>
+{% endblock %}

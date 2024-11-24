@@ -1,0 +1,171 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+            <!-- Employee List Content -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0 text-primary-emphasis fw-bold">Listado de Empleados</h3>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                        <form method="GET" action="{% url 'core:empleado_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+                            <div class="col-md-6">
+                                <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar empleado...">
+                            </div>
+                        </form>
+                        <a class="btn btn-primary fw-bold mt-3 mt-md-0" href="{% url 'core:empleado_create' %}">
+                            <i class="fas fa-plus me-2"></i>Nuevo Empleado
+                        </a>
+                    </div>
+
+                    <!-- Employee Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Empleado</th>
+                                    <th>Cargo</th>
+                                    <th>Sueldo</th>
+                                    <th>Dirección</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for empleado in empleados %}
+                                <tr>
+                                    <!-- Foto -->
+                                    <td>
+                                        <img src="{% if empleado.foto %}{{ empleado.foto.url }}{% else %}{% static 'img/empleado_default.jpg' %}{% endif %}" 
+                                             alt="Foto del empleado" 
+                                             class="rounded-circle" 
+                                             width="40px">
+                                    </td>
+                                    <!-- Empleado -->
+                                    <td>
+                                        <div>
+                                            <strong>{{ empleado.nombre_completo }}</strong><br>
+                                            <small class="text-muted">{{ empleado.cargo }}</small>
+                                        </div>
+                                    </td>
+                                    <!-- Cargo -->
+                                    <td>{{ empleado.cargo }}</td>
+                                    <!-- Sueldo -->
+                                    <td>${{ empleado.sueldo }}</td>
+                                    <!-- Dirección -->
+                                    <td>{{ empleado.direccion }}</td>
+                                    <!-- Estado -->
+                                    <td>
+                                        {% if empleado.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Acciones -->
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
+                                            <button class="btn btn-primary btn-sm" title="Detalle Empleado"
+                                                onclick="verEmpleado('{{ empleado.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{% url 'core:empleado_update' empleado.id %}" 
+                                               class="btn btn-success btn-sm text-white" title="Editar Empleado">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% with id=empleado.id name=empleado.nombre_completo msg="¿Está seguro de eliminar este empleado?" %}
+                                            <button class="btn btn-danger btn-sm" title="Eliminar Empleado" 
+                                                    onclick="confirmDelete('{{ id }}', '{{ name }}', '{{ msg|escapejs }}');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% endwith %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} empleados</p>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1"><i class="fas fa-chevron-left"></i></a>
+                            </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <!-- End Pagination -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Include delete confirmation modal -->
+    {% include 'includes/confirm_delete_modal.html' %}
+<!-- Include detail modal -->
+    {% include 'core/empleado/includes/detail_modal.html' %}
+{% endblock %}
+
+{% block js %}
+<script>
+    function confirmDelete(id, name, msg) {
+        document.getElementById('modalMessage').innerText = `${msg} ${name}`;
+        const form = document.getElementById('deleteForm');
+        form.action = `/empleados_delete/${id}/`;
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+
+    function closeModal() {
+        const modalElement = document.getElementById('confirmDeleteModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    function verEmpleado(id) {
+        fetch(`/empleados_detail/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Fill modal data
+                document.getElementById('empleado-id').textContent = data.id;
+                document.getElementById('empleado-nombre').textContent = data.nombre_completo;
+                document.getElementById('empleado-cargo').textContent = data.cargo;
+                document.getElementById('empleado-sueldo').textContent = `$${data.sueldo}`;
+                document.getElementById('empleado-direccion').textContent = data.direccion;
+                document.getElementById('empleado-estado').textContent = data.activo ? 'Activo' : 'Inactivo';
+                document.getElementById('empleado-foto').src = data.foto;
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('empleadoModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del empleado');
+            });
+    }
+</script>
+{% endblock %}

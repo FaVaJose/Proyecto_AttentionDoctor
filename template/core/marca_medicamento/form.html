@@ -1,0 +1,42 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 px-md-4 main-content">
+            <!-- mensajes de error del formulario -->
+            {% include 'includes/message_error_form.html' %}
+            <!-- Formulario de marca de medicamento -->
+            <form method="post" class="py-4">
+                {% csrf_token %}
+                <div class="card shadow p-4">
+                    <h3 class="text-primary-emphasis mb-4 fw-bold">{{ title1 }}</h3>
+                    <div class="row g-0">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold">{{ form.nombre.label }}</label>
+                            {{ form.nombre }}
+                            {{ form.nombre.errors }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">{{ form.descripcion.label }}</label>
+                            {{ form.descripcion }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.activo.id_for_label }}" class="form-label fw-bold">{{ form.activo.label }}</label>
+                            {{ form.activo }}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="btn btn-outline-success me-2" type="submit">Guardar Marca</button>
+                        <a class="btn btn-outline-warning" href="{% url 'core:marca_medicamento_list' %}">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
